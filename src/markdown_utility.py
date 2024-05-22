@@ -13,6 +13,17 @@ from textnode import (
 text_types = ["text", "bold", "italic", "code", "link", "image"]
 
 
+def text_to_textnodes(text):
+    list_nodes = []
+    starting_list = [TextNode(text, text_type_text)]
+    list_nodes = split_nodes_delimiter(starting_list, "**", text_type_bold)
+    list_nodes = split_nodes_delimiter(list_nodes, "*", text_type_italic)
+    list_nodes = split_nodes_delimiter(list_nodes, "`", text_type_code)
+    list_nodes = split_nodes_image(list_nodes)
+    list_nodes = split_nodes_link(list_nodes)
+    return list_nodes
+
+
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
     for old_node in old_nodes:
