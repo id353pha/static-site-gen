@@ -4,7 +4,9 @@ from textnode import (
     TextNode,
     text_type_bold,
     text_type_code,
+    text_type_image,
     text_type_italic,
+    text_type_link,
     text_type_text,
 )
 
@@ -35,6 +37,58 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 
             new_nodes.extend(temp_nodes)
 
+    return new_nodes
+
+
+def split_nodes_image(old_nodes):
+    new_nodes = []
+    for old_node in old_nodes:
+        if old_nodes.text_type != text_type_text:
+            new_nodes.append(old_node)
+        else:
+            temp_nodes = []
+            images = extract_markdown_images(old_node)
+            text = old_node.text
+            if len(images) == 0:
+                new_nodes.append(old_node)
+                continue
+            for image in images:
+                split_text = text.split(f"![{image[0]}]({image[1]})", 1)
+                if len(split_text) != 2:
+                    raise ValueError("Invalid markdown, formatted section not closed")
+                text = split_text[1]
+                if split_text != "":
+                    temp_nodes.append(TextNode(split_text[0], text_type_text))
+                temp_nodes.append(TextNode(image[0], text_type_image, image[1]))
+            new_nodes.extend(temp_nodes)
+            if text != "":
+                new_nodes.append(TextNode(text, text_type_text))
+    return new_nodes
+
+
+def split_nodes_link(old_nodes):
+    new_nodes = []
+    for old_node in old_nodes:
+        if old_nodes.text_type != text_type_text:
+            new_nodes.append(old_node)
+        else:
+            temp_nodes = []
+            links = extract_markdown_link(old_node)
+            text = old_node.text
+            if len(links) == 0:
+                new_nodes.append(old_node)
+                continue
+            for link in links:
+                split_text = text.split(f"[{link[0]}]({link[1]})", 1)
+                if len(split_text) != 2:
+                    raise ValueError("Invalid markdown, formatted section not closed")
+                text = split_text[1]
+                if split_text != "":
+                    temp_nodes.append(TextNode(split_text[0], text_type_text))
+                temp_nodes.append(TextNode(link[0], text_type_link, link[1]))
+            new_nodes.extend(temp_nodes)
+            if text != "":
+                new_nodes.append(TextNode(text, text_type_text))
     return new_nodes
 
 

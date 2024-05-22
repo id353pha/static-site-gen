@@ -96,6 +96,10 @@ class MarkdownUtilityTest(unittest.TestCase):
                 "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/dfsdkjfd.png",
             ),
         ]
+        image = extract_markdown_link(text)[0]
+        print(
+            text.split(f"![{image[0]}]({image[1]})", 1),
+        )
         self.assertEqual(result, extract_markdown_images(text))
 
     def test_link_extract(self):
@@ -104,7 +108,6 @@ class MarkdownUtilityTest(unittest.TestCase):
             ("link", "https://www.example.com"),
             ("secondlink", "https://www.example.com/another"),
         ]
-        print(extract_markdown_link(text))
         self.assertEqual(result, extract_markdown_link(text))
 
 
