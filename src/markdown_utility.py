@@ -43,11 +43,11 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 def split_nodes_image(old_nodes):
     new_nodes = []
     for old_node in old_nodes:
-        if old_nodes.text_type != text_type_text:
+        if old_node.text_type != text_type_text:
             new_nodes.append(old_node)
         else:
             temp_nodes = []
-            images = extract_markdown_images(old_node)
+            images = extract_markdown_images(old_node.text)
             text = old_node.text
             if len(images) == 0:
                 new_nodes.append(old_node)
@@ -57,7 +57,7 @@ def split_nodes_image(old_nodes):
                 if len(split_text) != 2:
                     raise ValueError("Invalid markdown, formatted section not closed")
                 text = split_text[1]
-                if split_text != "":
+                if split_text[0] != "":
                     temp_nodes.append(TextNode(split_text[0], text_type_text))
                 temp_nodes.append(TextNode(image[0], text_type_image, image[1]))
             new_nodes.extend(temp_nodes)
@@ -69,11 +69,11 @@ def split_nodes_image(old_nodes):
 def split_nodes_link(old_nodes):
     new_nodes = []
     for old_node in old_nodes:
-        if old_nodes.text_type != text_type_text:
+        if old_node.text_type != text_type_text:
             new_nodes.append(old_node)
         else:
             temp_nodes = []
-            links = extract_markdown_link(old_node)
+            links = extract_markdown_link(old_node.text)
             text = old_node.text
             if len(links) == 0:
                 new_nodes.append(old_node)
@@ -83,7 +83,7 @@ def split_nodes_link(old_nodes):
                 if len(split_text) != 2:
                     raise ValueError("Invalid markdown, formatted section not closed")
                 text = split_text[1]
-                if split_text != "":
+                if split_text[0] != "":
                     temp_nodes.append(TextNode(split_text[0], text_type_text))
                 temp_nodes.append(TextNode(link[0], text_type_link, link[1]))
             new_nodes.extend(temp_nodes)
